@@ -5,10 +5,7 @@ import Counter from "./Counter";
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* 
     <App />
-    */}
-    <Counter />
   </React.StrictMode>,
   document.getElementById("root")
 );
