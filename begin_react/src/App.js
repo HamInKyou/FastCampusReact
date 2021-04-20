@@ -1,6 +1,7 @@
 import React, { useRef, useReducer, useMemo, useCallback } from "react";
 import CreateUser from "./CreateUser";
 import UserList from "./UserList";
+import useInputs from "./useInputs";
 
 //컴포넌트에서 관리하는 값이 딱 하나고, 그 값이 단순한 숫자, 문자열 BOOLEAN 값이라면 useState로 관리하는게 편하지만,
 //상태가 복잡해지면 useReducer가 좀 더 편해질 수 있다.
@@ -12,10 +13,6 @@ function countActiveUsers(users) {
 
 //App 컴포넌트에서 사용할 초기 상태를 컴포넌트 바깥에 선언해주자.
 const initialState = {
-  inputs: {
-    username: "",
-    email: "",
-  },
   users: [
     {
       id: 1,
@@ -40,14 +37,6 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "CHANGE_INPUT":
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.name]: action.value,
-        },
-      };
     case "CREATE_USER":
       return {
         inputs: initialState.inputs,
@@ -72,18 +61,13 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [form, onChange, reset] = useInputs({
+    username: "",
+    email: "",
+  });
+  const { username, email } = form;
   const nextId = useRef(4);
   const { users } = state;
-  const { username, email } = state.inputs;
-
-  const onChange = useCallback((e) => {
-    const { name, value } = e.target;
-    dispatch({
-      type: "CHANGE_INPUT",
-      name,
-      value,
-    });
-  }, []);
 
   const onCreate = useCallback(() => {
     dispatch({
@@ -95,6 +79,7 @@ function App() {
       },
     });
     nextId.current += 1;
+    reset();
   }, [username, email]);
 
   const onToggle = useCallback((id) => {
