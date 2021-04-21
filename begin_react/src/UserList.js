@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserDispatch } from "./App";
 
 //useEffect
 //컴포넌트가 처음 화면에 나타나게 될 때, 사라지게 될 때,
@@ -12,8 +13,9 @@ import React from "react";
 //useMemo
 //이전에 연산된 값을 재사용
 //주로 성능을 최적화해야하는 상황에서 사용
-const User = React.memo(function ({ user, onRemove, onToggle }) {
+const User = React.memo(function ({ user }) {
   const { username, email, id, active } = user;
+  const dispatch = useContext(UserDispatch);
 
   /* 예제 1
   useEffect(() => {
@@ -68,7 +70,7 @@ const User = React.memo(function ({ user, onRemove, onToggle }) {
           color: active ? "green" : "black",
           cursor: "pointer",
         }}
-        onClick={() => onToggle(id)}
+        onClick={() => dispatch({ type: "TOGGLE_USER", id })}
       >
         {username}
       </b>{" "}
@@ -78,21 +80,18 @@ const User = React.memo(function ({ user, onRemove, onToggle }) {
       파라미터를 넣어서 호출하기 위해선 새로 함수를 만들어야한다.
       함수를 새로 만들지 않고, 바로 파라미터 넣어서 호출하면, 렌더링시 바로 호출된다!
        */}
-      <button onClick={() => onRemove(id)}>삭제</button>
+      <button onClick={() => dispatch({ type: "REMOVE_USER", id })}>
+        삭제
+      </button>
     </div>
   );
 });
 
-function UserList({ users, onRemove, onToggle }) {
+function UserList({ users }) {
   return (
     <div>
       {users.map((user) => (
-        <User
-          user={user}
-          key={user.id}
-          onRemove={onRemove}
-          onToggle={onToggle}
-        />
+        <User user={user} key={user.id} />
       ))}
     </div>
   );
