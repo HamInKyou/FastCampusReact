@@ -1,13 +1,6 @@
-import React, {
-  useRef,
-  useReducer,
-  useMemo,
-  useCallback,
-  createContext,
-} from "react";
+import React, { useReducer, useMemo, createContext } from "react";
 import CreateUser from "./CreateUser";
 import UserList from "./UserList";
-import useInputs from "./useInputs";
 
 //컴포넌트에서 관리하는 값이 딱 하나고, 그 값이 단순한 숫자, 문자열 BOOLEAN 값이라면 useState로 관리하는게 편하지만,
 //상태가 복잡해지면 useReducer가 좀 더 편해질 수 있다.
@@ -69,36 +62,12 @@ export const UserDispatch = createContext(null);
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [form, onChange, reset] = useInputs({
-    username: "",
-    email: "",
-  });
-  const { username, email } = form;
-  const nextId = useRef(4);
   const { users } = state;
-
-  const onCreate = useCallback(() => {
-    dispatch({
-      type: "CREATE_USER",
-      user: {
-        id: nextId.current,
-        username,
-        email,
-      },
-    });
-    nextId.current += 1;
-    reset();
-  }, [username, email]);
 
   const count = useMemo(() => countActiveUsers(users), [users]);
   return (
     <UserDispatch.Provider value={dispatch}>
-      <CreateUser
-        username={username}
-        email={email}
-        onChange={onChange}
-        onCreate={onCreate}
-      />
+      <CreateUser />
       <UserList users={users} />
       <div>활성 사용자 수: {count}</div>
     </UserDispatch.Provider>

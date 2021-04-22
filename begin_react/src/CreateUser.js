@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useContext, useRef } from "react";
+import { UserDispatch } from "./App";
+import useInputs from "./useInputs";
 
 //유저 추가할 때 사용할 컴포넌트
 //필요한 값들을 props로 갖고와서 사용
 //내부에서 상태 관리는 하지 않을 것이다.
-function CreateUser({ username, email, onChange, onCreate }) {
-  //onChange : input 안의 값이 바뀔 때마다 호출할 함수
-  //onCreate : 버튼을 눌렀을 때 새로운 항목을 등록해주는 함수
+function CreateUser() {
+  const dispatch = useContext(UserDispatch);
+  const [form, onChange, reset] = useInputs({
+    username: "",
+    email: "",
+  });
+  const { username, email } = form;
+  const nextId = useRef(4);
+
+  const onCreate = () => {
+    dispatch({
+      type: "CREATE_USER",
+      user: {
+        id: nextId.current,
+        username,
+        email,
+      },
+    });
+    nextId.current += 1;
+    reset();
+  };
   return (
     <div>
       <input
