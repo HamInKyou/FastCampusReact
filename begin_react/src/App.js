@@ -1,6 +1,7 @@
 import React, { useReducer, useMemo, createContext } from "react";
 import CreateUser from "./CreateUser";
 import UserList from "./UserList";
+import produce from "immer";
 
 //컴포넌트에서 관리하는 값이 딱 하나고, 그 값이 단순한 숫자, 문자열 BOOLEAN 값이라면 useState로 관리하는게 편하지만,
 //상태가 복잡해지면 useReducer가 좀 더 편해질 수 있다.
@@ -37,22 +38,19 @@ const initialState = {
 function reducer(state, action) {
   switch (action.type) {
     case "CREATE_USER":
-      return {
-        inputs: initialState.inputs,
-        users: state.users.concat(action.user),
-      };
+      return produce(state, (draft) => {
+        draft.users.push(action.user);
+      });
     case "TOGGLE_USER":
-      return {
-        ...state,
-        users: state.users.map((user) =>
-          user.id === action.id ? { ...user, active: !user.active } : user
-        ),
-      };
+      return produce(state, (draft) => {
+        const user = draft.users.find((user) => user.id === action.id);
+        user.active = !user.active;
+      });
     case "REMOVE_USER":
-      return {
-        ...state,
-        users: state.users.filter((user) => user.id !== action.id),
-      };
+      return produce(state, (draft) => {
+        const index = draft.users.findIndex((user) => user.id === action.id);
+        draft.users.splice(index, 1);
+      });
     default:
       return state;
   }
