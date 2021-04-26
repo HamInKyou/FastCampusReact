@@ -166,3 +166,47 @@ const nextArray = produce(array, (draft) => {
   draft[0].text = draft[0].text + " world"; //첫번째 원소의 텍스트 뒤에 world 붙여주자
 });
 //내부 함수에서 불변성 신경 안쓰고 업데이트 해줬는데, 알아서 불변성 처리해줌 (기존의 배열 건드리지 않음)
+
+//예제3
+//함수형 업데이트를 통한 useState
+/*
+const [todo, setTodo] = useState({
+  text: "Hello",
+  done: false,
+});
+*/
+/*
+const onClick = useCallback(() => {
+  setTodo((todo) => ({
+    ...todo,
+    done: !todo.done,
+  }));
+}, []);
+*/
+//setTodo에 그 다음 상태를 넣어주는게 아니라, 어떻게 업데이트할지 정의하는 함수를 넣어주었다.
+//이 방식을 활용하면 deps에 기존 todo를 넣어줄 필요가 없었다는 장점이 있었다!
+
+//원래 immer 사용할 때, produce의 첫번째 파라미터로 state를 넣어주고,
+//두번째 파라미터로 draft를 파라미터로 가져오는 함수를 넣어줬었는데,
+//아래처럼 파라미터에 state를 생략하고 함수만 넣어줬을 경우
+//이 produce함수의 결과물은 updater 함수가 된다.
+/*
+const updater = produce((draft) => {
+  draft.done = !draft.done;
+});
+const nextTodo = updater(todo);
+//updater가 하나의 함수이기 때문에, updater에 todo를 넣어서 쓰자!
+*/
+
+//함수형 업데이트 할 떄 immer를 사용한다면?
+//setTodo에 업데이트할 때 쓰이는 함수를 넣어도 되었기에,
+//updater 함수를 여기에 만들어서 넣어주자!
+/*
+const onClick = useCallback(() => {
+  setTodo(
+    produce((draft) => {
+      draft.done = !draft.done;
+    })
+  );
+}, []);
+*/
