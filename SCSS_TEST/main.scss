@@ -1,0 +1,193 @@
+//컴파일되지 않는 주석 -> css로 변환되지 않는다.
+/* 컴파일되는 주석 -> css로 컴파일이 된다.*/
+
+//데이터 종류
+// Numbers -> 숫자
+// Strings -> 문자
+// Colors -> 색상 표현
+// Booleans -> 논리
+// Nulls -> 아무것도 없음 -> null -> 컴파일할 때 무시
+// Lists -> (apple, orange, banana) 쉼표로 구분 / (apple orange) 공백으로 구분 -> 괄호 안붙여도 됨
+// Maps -> (apple:a , orange: o) -> Lists와 유사하나 값이 key: value 형태 -> 괄호 꼭 붙여야 함
+
+// 중첩
+// 이렇게 내부에 중첩해서 정리할 수 있다.
+// 선택자의 반복을 피할 수 있음!
+.container {
+  $size: 100px;
+  .item {
+    width: $size;
+    height: $size;
+    background: orange;
+  }
+}
+
+//상위 선택자 참조
+.btn {
+  position: absolute;
+  &.active {
+    //중첩 안에서 & 키워드는 상위(부모) 선택자(바로 위) 를 참조하여 치환
+    // &.active 는 .btn.active와 똑같다
+    //클래스 선택자와 클래스 선택자가 붙어있으면 일치 선택자
+    //두 클래스를 동시에 가지고 있는 애를 선택
+    color: red;
+  }
+}
+
+//이런식으로도 활용 가능!
+//fs-small, fs-medium, fs-large 세개의 css가 생김!
+.fs {
+  &-small {
+    font-size: 14px;
+  }
+  &-medium {
+    font-size: 16px;
+  }
+  &-large {
+    font-size: 18px;
+  }
+}
+
+///@at-root (중첩 벗어나기)
+//w,h 변수를 .list 안에서 설정했다.
+//.box는 .list 밖에 있지만 이 변수를 쓰고싶다!
+//@at-root를 사용해서 .list 밖에 있지만, .list 안의 변수를 쓸 수 있게 하자
+.list {
+  $w: 100px;
+  $h: 50px;
+  li {
+    width: $w;
+    height: $h;
+  }
+
+  @at-root .box {
+    width: $w;
+    height: $h;
+  }
+}
+
+//font-. margin- 등과 같이 동일항 네임 스페이스를 가지는 속성들은 다음과 같이 쓸 수 있다.
+.box {
+  margin: {
+    top: 10px;
+    left: 20px;
+  }
+}
+
+//변수
+//변수 이름 앞에는 항상 $를 붙이자.
+//이거 css 박스 안에 없어도 돼, 괄호 밖에 있어도 돼 (전역)
+$color-primary: #e96900;
+
+//변수는 선언된 블록 {} 내에서만 유효범위를 가진다.
+// !global을 붙이면 박스 바깥에서도 그 변수를 쓸 수 있게 해준다.
+// 이제 못씀 -> deprecated 되었음! ( 옛날 거에만 남음 )
+/*
+.box1 {
+  $color: #111 !global;
+}
+.box2 {
+  background: $color;
+}
+*/
+
+//변수에 변수를 할당할 수도 있다.
+$red: #ff0000;
+$color-primary: $red;
+
+// !default (초깃값 설정)
+// 변수와 값을 설정하겠지만, 혹시 기존 변수가 있을 경우 현재 설정하는 변수의 값은 사용하지 않겠다!
+$color-primary: red;
+.box {
+  $color-primary: blue !default;
+  background: $color-primary;
+}
+// .box의 백그라운드 색깔은 파랑색이 아니라 레드가 나오게 된다!
+
+//#{} (문자 보간)
+//#{} 를 이용해서 코드의 어디든지 변수 값을 넣을 수 있다.
+$family: unquote("넣을 값");
+//unquote는 문자열에서 따옴표를 제거해주는 Sass의 내장 함수이다.
+
+//"~~~#{$family}"
+//위와 같이 문자열 사이에 #{} 넣고 그 안에 변수 집어넣을 수 있다.
+
+//css가 외부의 css를 불러올려고 할때 @import를 통해 불러왔었다.
+//SCSS도 마찬가지로 @import로 외부에서 불러와서 사용할 수 있다.
+//css에서는 @import url("경로") 해서 불러왔었지만,
+//Sass에서는 @import "경로" 해도 불러올 수 이싿.
+//하나의 @import로 여러 파일을 불러올 수도 있다.
+//파일 이름은 ,로 구분한다!
+
+//재활용 (Mixins)
+//재사용할 CSS 선언 그룹을 정의하는게 @mixin
+//그 그룹을 사용(포함)하는게 @include
+@mixin size($w: 100px, $h: 100px) {
+  width: $w;
+  height: $h;
+}
+
+.box1 {
+  @include size; //아무것도 인자로 안줄경우 위에서 선언한 기본값!
+}
+
+.box2 {
+  @include size(200px); //인자는 차례대로 들어감
+}
+
+.box3 {
+  @include size($h: 200px); //순서와 다르게 넣고싶다면 이런 방식으로!
+}
+
+//가변 인수
+//때때로 입력할 인수의 개수가 불확실한 경우가 있다.
+//이럴 때 가변 인수를 사용하는데, 가변 인수는 매개변수 뒤에 ...을 붙여준다.
+@mixin var($w: 100px, $h, $bg...) {
+  width: $w;
+  height: $h;
+  background: $bg;
+}
+
+//세번째 부터 인자들은 bg에 배열처럼 다 들어간다.
+.box {
+  @include var(1, 2, 3, 4, 5);
+}
+
+//params 배열을 풀어 차례대로 전달한다.
+.box2 {
+  $params: 100px, 100px, blue;
+  @include var($params...);
+}
+
+//키워드를 맵 형태로 전달
+@mixin var2($w: 100px, $h, $bg) {
+  width: $w;
+  height: $h;
+  background: $bg;
+}
+
+.box3 {
+  $values: (
+    h: 300px,
+    bg: black,
+  );
+  @include var2($values...);
+}
+
+//@content
+//선언된 mixin에 @content가 포함되어 있다면 해당 부분에 원하는 스타일 블록을 전달할 수 있다.
+@mixin test() {
+  //스타일;
+  @content;
+}
+
+@include test() {
+  //스타일; -> 여기서 작성한 스타일이 mixin content에 대치됨
+}
+
+//@extend
+//상속 같은 개념 -> 별로.. -> 차라리 mixin을 활용하자
+//box의 속성을 모두 끌고온다.
+.box4 {
+  @extend .box;
+}
