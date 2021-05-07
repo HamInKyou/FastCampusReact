@@ -11,10 +11,22 @@ $blue: #228be6; // 주석!
   border-radius: 4px;
   cursor: pointer;
 
-  height: 2.25rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  font-size: 1rem;
+  &.large {
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
+  &.medium {
+    height: 2.25rem;
+    font-size: 1rem;
+  }
+
+  &.smaill {
+    height: 1.75rem;
+    font-size: 0.875rem;
+  }
 
   background: $blue;
   &:hover {
@@ -22,5 +34,10 @@ $blue: #228be6; // 주석!
   }
   &:active {
     background: darken($blue, 10%);
+  }
+
+  //이렇게 두개가 붙어있으면 오른쪽에 특정 스타일을 넣겠다.
+  & + & {
+    margin-left: 1rem;
   }
 }
