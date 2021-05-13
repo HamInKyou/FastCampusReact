@@ -10,6 +10,17 @@ $pink: #f06595;
   &:active {
     background: darken($color, 10%);
   }
+
+  &.outline {
+    color: $color;
+    background: none;
+    border: 1px solid $color;
+
+    &:hover {
+      background: $color;
+      color: white;
+    }
+  }
 }
 .Button {
   display: inline-flex;
@@ -54,5 +65,14 @@ $pink: #f06595;
   //이렇게 두개가 붙어있으면 오른쪽에 특정 스타일을 넣겠다.
   & + & {
     margin-left: 1rem;
+  }
+
+  &.fullWidth {
+    width: 100%;
+    justify-content: center;
+    & + & {
+      margin-left: 0;
+      margin-top: 1rem;
+    }
   }
 }
